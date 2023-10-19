@@ -19,4 +19,5 @@
 (Caution: each script has been created by me using my knowledge and ChatGPT)
 
 # Script
-PWD_SERV_TMPL: PowerShell script for identifying accounts with passwords that will expire soon, with personalized HTML email sending.
+- PWD_SERV_TMPL: PowerShell script for identifying accounts with passwords that will expire soon, with personalized HTML email sending.
+- 
