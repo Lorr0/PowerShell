@@ -5,7 +5,7 @@ Import-Module ActiveDirectory
 $limite = (Get-Date).AddDays(15)
 
 # Récupérer tous les comptes d'utilisateurs de l'OU spécifiée
-$utilisateurs = Get-ADUser -Filter * -SearchBase "#chemin d'OU des comptes a vérifier" -Properties "SamAccountName", "PasswordLastSet", "msDS-UserPasswordExpiryTimeComputed", "PasswordNeverExpires"
+$utilisateurs = Get-ADUser -Filter * -SearchBase "#CHEMIN DES COMPTES A INSPECTER" -Properties "SamAccountName", "PasswordLastSet", "msDS-UserPasswordExpiryTimeComputed", "PasswordNeverExpires", "extensionAttribute8", "Description"
 
 # Initialiser une variable pour vérifier s'il y a des comptes à expiration imminente
 $comptesExpirant = $false
@@ -21,10 +21,13 @@ foreach ($utilisateur in $utilisateurs) {
         if ($passwordExpiry -ge (Get-Date) -and $passwordExpiry -le $limite) {
             # Le mot de passe va expirer dans les 15 prochains jours
             $joursRestants = ($passwordExpiry - (Get-Date)).Days
+            $description = if ($utilisateur.Description) { $utilisateur.Description } else { "" }  # Vérifier si Description est nulle
             $donnees = [PSCustomObject]@{
-                Nom = $utilisateur.SamAccountName
+                Nom = $utilisateur.SamAccountName.ToLower()  # Convertir en minuscules
+                Description = $description  # Ajouter la description (ou une chaîne vide si nulle)
                 "Date d'expiration" = $passwordExpiry.ToShortDateString()
                 "Jours restants" = $joursRestants
+                "extensionAttribute8" = if ($utilisateur.extensionAttribute8) { $utilisateur.extensionAttribute8.ToLower() } else { "" }  # Vérifier si extensionAttribute8 est nulle
             }
             $tableauDonnees += $donnees
             $comptesExpirant = $true
@@ -32,102 +35,159 @@ foreach ($utilisateur in $utilisateurs) {
     }
 }
 
-### Message ###################################################################
+# Tri du tableau par les jours restants en ordre croissant
+$tableauDonnees = $tableauDonnees | Sort-Object -Property "Jours restants"
 
+# Créer la liste de destinataires (ajoutez les adresses e-mail ici)
+$destinataires = @("adresse@email.com")
+
+# Ajouter l'adresse e-mail additionnelle si elle existe
+foreach ($donnees in $tableauDonnees) {
+    if ($donnees."extensionAttribute8") {
+        $destinataires += $donnees."extensionAttribute8"
+    }
+}
+
+# Créer le message
 $Msg = New-Object System.Net.Mail.MailMessage
- 
-$Msg.From = "#Compte envoyant mail"
+$Msg.From = "adresse@email.com"
 
-$Msg.To.Add("#Compte receveur mail") 
-    
-### Message Body ######Si il y'a des comptes expirant la fonction "if" par mais si il n'ya personne la fonction "else" indiquant qu'il n'ya pas de compte expirant #####
+# Ajouter les destinataires (pour et CC)
+foreach ($destinataire in $destinataires) {
+    $Msg.To.Add($destinataire.ToLower())  # Convertir en minuscules
+}
+
+# Message Body
 if ($comptesExpirant) {
-
-$MsgHTML = "<html>
-            <style type=`"text/css`">
-            <!--
-            body {
-	            background-color: #E0E0E0;
-	            font-family: sans-serif;
-            }
-            table, th, td {
-	            background-color: white;
-	            border-collapse: collapse;
-	            border: 1px solid black;
-	            padding: 5px;
-            }
-            -->
-            </style>
-            <body>"
-
-$MsgHTML += "Liste des comptes ayant un mot de passe expirant sous 15 jours.<br />
-            <br />
-            <br />
-            Nom des comptes  -  Date d'expiration  -  Nombre de jours avant expiration
-            <br />
-            <br />"
-
-$MsgHTML += $tableauDonnees | ConvertTo-Html -Fragment 
-
-$MsgHTML += "<br />
-            Certains comptes de services néccessite une intervention rapide.<br />
-            <br />"
-
-
-
-
-$MsgHTML += "</body></html>"
+    $MsgHTML = @"
+<html>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+        .container {
+            background-color: #ffffff;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin: 20px auto;
+            max-width: 1000px; /* Augmenter la largeur du conteneur */
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #e1e1e1;
+            padding: 35px; /* Augmenter la taille de la cellule */
+            text-align: left;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <h1>Liste des comptes expirant dans les 15 prochains jours</h1>
+            <table>
+                <tr>
+                    <th>Nom des comptes</th>
+                    <th>Date d'expiration</th>
+                    <th>Jours restants</th>
+                     <th>Description</th>
+                </tr>
+"@
+
+    foreach ($donnees in $tableauDonnees) {
+        $MsgHTML += @"
+                <tr>
+                    <td>$($donnees.Nom)</td>
+                    <td>$($donnees."Date d'expiration")</td>
+                    <td>$($donnees."Jours restants")</td>
+                    <td>$($donnees.Description)</td>
+                </tr>
+"@
+    }
+
+    $MsgHTML += @"
+            </table>
+            <p>Certains comptes de services nécessitent une intervention rapide.</p>
+        </div>
+    </body>
+</html>
+"@
+}
 else {
-    $MsgHTML2 = "<html>
-            <style type=`"text/css`">
-            <!--
-            body {
-	            background-color: #E0E0E0;
-	            font-family: sans-serif;
-            }
-            table, th, td {
-	            background-color: white;
-	            border-collapse: collapse;
-	            border: 1px solid black;
-	            padding: 5px;
-            }
-            -->
-            </style>
-            <body>"
+    $MsgHTML2 = @"
+<html>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <h1>Liste des comptes</h1>
+            <p>Aucun compte n'expire dans les 15 prochains jours. Votre système est à jour.</p>
+        </div>
+    </body>
+</html>
+"@
+}
 
-$MsgHTML2 += "Liste des comptes ayant un mot de passe expirant sous 15 jours.<br />
-            <br />
-            <br />
-            Pas de comptes expirant :)
-            <br />
-            <br />"
+# Définir le sujet du message
+$Msg.Subject = "Expiration mot de passe compte SVC"
 
-$MsgHTML2 += "</body></html>"
-}        
-###/Message Body ##############################################################
-
-$Msg.Subject = "Liste des comptes ayant un mot de passe expirant sous 15 jours."   
-#$Msg.Body = $MsgBodyTxt
+# Sélectionner le corps du message en fonction de la présence de comptes expirants
 $Msg.Body = if ($comptesExpirant) {
     $MsgHTML 
 } 
 else {
     $MsgHTML2
 }
-$Msg.BodyEncoding =$([system.text.encoding]::utf8)
-#$Msg.IsBodyHtml = $false
+
+# Définir l'encodage du corps du message
+$Msg.BodyEncoding = $([system.text.encoding]::utf8)
+
+# Indiquer que le corps du message est au format HTML
 $Msg.IsBodyHtml = $true
 
-# IDFT SMTP
+# Configuration des paramètres SMTP
+$Username = "votre_nom_d_utilisateur_SMTP"
+$Password = "votre_mot_de_passe_SMTP"
+$SmtpSrv = "serveur_SMTP"
+$SmtpPort = "port_SMTP"
 
-$Username = "#COMPTE SMTP"
-$Password = "#MDP SMTP"
-$SmtpSrv = "#SERV SMTP"
-$SmtpPort = "#Port"
+# Créer un client SMTP
+$Smtp = New-Object Net.Mail.SmtpClient($SmtpSrv, $SmtpPort)
+$Smtp.Credentials = New-Object System.Net.NetworkCredential($Username, $Password)
 
-$Smtp = New-Object Net.Mail.SmtpClient($SmtpSrv,$SmtpPort)
-$Smtp.Credentials = New-Object System.Net.NetworkCredential($Username,$Password)
+# Envoyer le message
 $Smtp.Send($Msg)
+
+# Libérer les ressources utilisées par l'objet MailMessage
 $Msg.Dispose()
- 
