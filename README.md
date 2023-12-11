@@ -9,6 +9,7 @@
 # Script
 - PWD_SERV_TMPL : Script PowerShell permettant d'identifier les comptes ayant leur mdp qui va bientot expirer avec envoie de mail personnaliser sous HTML
 - Compte_kill : Récuperer tout les comptes désactivers dans l'AD
+- Copy user rights : Copie les droits utilisateurs d'un compte a un autre 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # -English Version-
 
