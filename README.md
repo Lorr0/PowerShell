@@ -1,25 +1,29 @@
 # -Version Française-
 
-# PowerShell_Script
+# PowerShell_Scripts
 
-👀 Vous pouvez trouver ici tout mes scripts PowerShell réaliser durant mes études/travail avec la descriptions mis a jour ici
+👀 Retrouvez ici l'ensemble de mes scripts PowerShell créés au cours de mes études/travaux, accompagnés de descriptions mises à jour.
 
-(Attention chaque scripts a été réaliser par mes soins a l'aide de mes connaissances et ChatGPT)
+(Note: Chaque script a été développé par mes soins en utilisant mes connaissances ainsi que l'aide de ChatGPT)
 
-# Script
-- PWD_SERV_TMPL : Script PowerShell permettant d'identifier les comptes ayant leur mdp qui va bientot expirer avec envoie de mail personnaliser sous HTML
-- Compte_kill : Récuperer tout les comptes désactivers dans l'AD
-- Copy user rights : Copie les droits utilisateurs d'un compte a un autre
-- Get_Info_User_And_Update_DELL : Recuperer le nom machine + nom session + Uptime et lancer EXE d'update
+## Scripts
+- **PWD_SERV_TMPL :** Script PowerShell permettant d'identifier les comptes dont le mot de passe va bientôt expirer, avec envoi d'un courriel personnalisé au format HTML.
+- **Compte_kill :** Récupère tous les comptes désactivés dans l'Active Directory.
+- **Copy_user_rights :** Copie les droits d'utilisateur d'un compte vers un autre.
+- **Get_Info_User_And_Update_DELL :** Récupère le nom de la machine, le nom de la session, l'uptime et lance l'exécutable de mise à jour.
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # -English Version-
 
-# PowerShell_Script
+# PowerShell_Scripts
 
-👀 You can find here all my PowerShell scripts created during my studies/work with updated descriptions here
+👀 Here, you can find all my PowerShell scripts created during my studies/work, along with updated descriptions.
 
-(Caution: each script has been created by me using my knowledge and ChatGPT)
+(Caution: Each script has been developed by me using my knowledge and assistance from ChatGPT)
 
-# Script
-- PWD_SERV_TMPL: PowerShell script for identifying accounts with passwords that will expire soon, with personalized HTML email sending.
-- 
+## Scripts
+- **PWD_SERV_TMPL:** PowerShell script to identify accounts with passwords expiring soon, with personalized HTML email sending.
+- **Compte_kill:** Retrieves all disabled accounts in the Active Directory.
+- **Copy_user_rights:** Copies user rights from one account to another.
+- **Get_Info_User_And_Update_DELL:** Retrieves machine name, session name, uptime, and launches the update executable.
