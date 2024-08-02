@@ -23,7 +23,7 @@
 
 ## Comment contribuer
 1. **Fork** le projet.
-2. **Clone** votre fork en local : `git clone https://github.com/Lorr0/PowerShell_Scripts.git`
+2. **Clone** votre fork en local : `git clone https://github.com/Lorr0/PowerShell.git`
 3. Créez une **branche** pour votre modification : `git checkout -b feature/nom-de-la-feature`
 4. **Commit** vos changements : `git commit -m 'Ajouter une nouvelle fonctionnalité'`
 5. **Push** vers la branche : `git push origin feature/nom-de-la-feature`
