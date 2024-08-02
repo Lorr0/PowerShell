@@ -1,29 +1,37 @@
-# -Version Française-
-
 # PowerShell_Scripts
 
 👀 Retrouvez ici l'ensemble de mes scripts PowerShell créés au cours de mes études/travaux, accompagnés de descriptions mises à jour.
 
-(Note: Chaque script a été développé par mes soins en utilisant mes connaissances ainsi que l'aide de ChatGPT)
+(Note : Chaque script a été développé par mes soins en utilisant mes connaissances ainsi que l'aide de ChatGPT)
 
 ## Scripts
-- **PWD_SERV_TMPL :** Script PowerShell permettant d'identifier les comptes dont le mot de passe va bientôt expirer, avec envoi d'un courriel personnalisé au format HTML.
-- **Compte_kill :** Récupère tous les comptes désactivés dans l'Active Directory.
-- **Copy_user_rights :** Copie les droits d'utilisateur d'un compte vers un autre.
-- **Get_Info_User_And_Update_DELL :** Récupère le nom de la machine, le nom de la session, l'uptime et lance l'exécutable de mise à jour.
+- **PWD_SERV_TMPL :**
+  - **Description :** Identifie les comptes dont le mot de passe va bientôt expirer.
+  - **Fonctionnalité :** Envoi d'un courriel personnalisé au format HTML.
+  
+- **Compte_kill :**
+  - **Description :** Récupère tous les comptes désactivés dans l'Active Directory.
+  
+- **Copy_user_rights :**
+  - **Description :** Copie les droits d'utilisateur d'un compte vers un autre.
+  
+- **Get_Info_User_And_Update_DELL :**
+  - **Description :** Récupère des informations sur l'utilisateur et la machine.
+  - **Fonctionnalité :** Récupère le nom de la machine, le nom de la session, l'uptime et lance l'exécutable de mise à jour.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-# -English Version-
+## Comment contribuer
+1. **Fork** le projet.
+2. **Clone** votre fork en local : `git clone https://github.com/Lorr0/PowerShell_Scripts.git`
+3. Créez une **branche** pour votre modification : `git checkout -b feature/nom-de-la-feature`
+4. **Commit** vos changements : `git commit -m 'Ajouter une nouvelle fonctionnalité'`
+5. **Push** vers la branche : `git push origin feature/nom-de-la-feature`
+6. Créez une **Pull Request** sur le dépôt original.
 
-# PowerShell_Scripts
+## Contact
+Pour toute question, veuillez me contacter via [contact.gregory@blanfune.com](mailto:contact.gregory@blanfune.com).
 
-👀 Here, you can find all my PowerShell scripts created during my studies/work, along with updated descriptions.
+---
 
-(Caution: Each script has been developed by me using my knowledge and assistance from ChatGPT)
-
-## Scripts
-- **PWD_SERV_TMPL:** PowerShell script to identify accounts with passwords expiring soon, with personalized HTML email sending.
-- **Compte_kill:** Retrieves all disabled accounts in the Active Directory.
-- **Copy_user_rights:** Copies user rights from one account to another.
-- **Get_Info_User_And_Update_DELL:** Retrieves machine name, session name, uptime, and launches the update executable.
+Merci de visiter mon dépôt et d'utiliser mes scripts ! 🚀
