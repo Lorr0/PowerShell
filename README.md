@@ -18,7 +18,10 @@
 - **Get_Info_User_And_Update_DELL :**
   - **Description :** Récupère des informations sur l'utilisateur et la machine.
   - **Fonctionnalité :** Récupère le nom de la machine, le nom de la session, l'uptime et lance l'exécutable de mise à jour.
-
+  - 
+- **DNS_Inspect :**
+  - **Description :** Sort toutes les ips souhaitez de la liste DNS d'un domaine.
+  - 
 ---
 
 ## Comment contribuer
