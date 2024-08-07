@@ -20,7 +20,7 @@
   - **Fonctionnalité :** Récupère le nom de la machine, le nom de la session, l'uptime et lance l'exécutable de mise à jour.
     
 - **DNS_Inspect :**
-  - **Description :** Sort toutes les ips souhaitez de la liste DNS d'un domaine.
+  - **Description :** Sort toutes les IPs souhaitées de la liste DNS d'un domaine.
     
 ---
 
