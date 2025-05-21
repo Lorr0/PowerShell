@@ -6,7 +6,7 @@ $prtgPasshash = "xxxxxxxx"               # Généré dans PRTG : Mon Compte > Pa
 $webhookUrl = "********"  # URL Power Automate
 
 # === PARAMÈTRES ===
-$csvFolder = "C:\PRTG-STATS"
+$csvFolder = "C:\PRTG_STATS"
 
 # Création du dossier s’il n’existe pas
 if (-not (Test-Path $csvFolder)) {
