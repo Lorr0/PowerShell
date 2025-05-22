@@ -1,24 +1,21 @@
-# === CONFIGURATION ===
-# 🔐 Authentification PRTG (basic auth encodée en base64)
-$prtgServer = "LIEN_PRTG"             # Sans /api/
-$prtgUser = "LOGIN_PRTG"
-$prtgPasshash = "xxxxxxxx"               # Généré dans PRTG : Mon Compte > Passhash
-$webhookUrl = "********"  # URL Power Automate
+# === PARAMÈTRES À DÉFINIR ===
+$csvFolder = "C:\chemin\vers\dossierCSV"
+$prtgServer = "https://prtg.example.com"
+$prtgUser = "utilisateur"
+$prtgPasshash = "votre_passhash"
+$webhookUrl = "https://webhook.teams..."
 
-# === PARAMÈTRES ===
-$csvFolder = "C:\PRTG_STATS"
-
-# Création du dossier s’il n’existe pas
+# === CRÉATION DU DOSSIER SI NÉCESSAIRE ===
 if (-not (Test-Path $csvFolder)) {
     New-Item -ItemType Directory -Path $csvFolder | Out-Null
 }
 
-# Date
+# === DATES ===
 $moisActuel = Get-Date -Format "yyyy-MM"
 $dateDuJour = Get-Date -Format "yyyy-MM-dd"
 $csvStatsPath = Join-Path $csvFolder "prtg_errors_stats_$moisActuel.csv"
 
-# Capteurs à exclure (insensible à la casse)
+# === CAPTEURS À EXCLURE (INSENSIBLE À LA CASSE) ===
 $excludedSensors = @(
     "Memory: Physical Memory",
     "Charge CPU",
@@ -43,7 +40,7 @@ $sensors = $sensors | Where-Object {
     $excludedSensors -notcontains $_.sensor.ToLower()
 }
 
-# === GÉNÉRATION DES ERREURS ===
+# === GÉNÉRATION DU MESSAGE ===
 if ($sensors.Count -eq 0) {
     $message = "✅ Aucun capteur en erreur actuellement."
 } else {
@@ -53,12 +50,11 @@ if ($sensors.Count -eq 0) {
     $message = $listeCapteurs -join "||"
 }
 
-# === ENVOI DANS TEAMS ===
+# === ENVOI DU MESSAGE DANS TEAMS ===
 $body = @{
     title = "🚨 Capteurs PRTG en erreur"
     text  = $message
 }
-
 $jsonBody = $body | ConvertTo-Json -Depth 5
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 $bodyBytes = $utf8NoBom.GetBytes($jsonBody)
@@ -70,12 +66,16 @@ try {
     Write-Error "❌ Erreur lors de l'envoi vers Teams : $_"
 }
 
-# === GESTION DU CSV MENSUEL ===
+# === SAUVEGARDE DANS LE CSV UNIQUEMENT SI ERREURS ===
+if ($sensors.Count -eq 0) {
+    Write-Host "✅ Aucun capteur en erreur. Aucune écriture dans le CSV."
+    return
+}
 
 # Nettoyage des erreurs
 $erreurs = $message -split '\|\|' | ForEach-Object { $_.Trim().TrimStart('❌').Trim() }
 
-# Chargement des stats existantes
+# Chargement du CSV existant ou création d’un tableau vide
 if (Test-Path $csvStatsPath) {
     $stats = Import-Csv -Path $csvStatsPath
 } else {
@@ -94,6 +94,6 @@ foreach ($err in $erreurs) {
     }
 }
 
-# Sauvegarde dans le fichier du mois
+# Sauvegarde du fichier
 $stats | Sort-Object Date, Erreur | Export-Csv -Path $csvStatsPath -NoTypeInformation -Encoding UTF8
 Write-Host "📁 Statistiques enregistrées dans : $csvStatsPath"
