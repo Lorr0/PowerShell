@@ -2,7 +2,6 @@
 $mois = (Get-Date -Format "yyyy-MM")
 $csvStatsPath = "C:\PRTG_STATS\prtg_errors_stats_$mois.csv"
 $cheminHtmlRapport = "C:\PRTG_STATS\rapport_prtg_$mois.html"
-$dossierArchives = "C:\PRTG_STATS\Archives"
 
 # === VERIFICATION DU CSV ===
 if (!(Test-Path $csvStatsPath)) {
@@ -25,27 +24,85 @@ $totalErreurs = ($donneesGroupees | Measure-Object -Property Count -Sum).Sum
 # === GENERATION DU HTML SANS ACCENTS ===
 $html = @"
 <!DOCTYPE html>
-<html lang=\"fr\">
+<html lang="en">
 <head>
-    <meta charset=\"utf-8\">
-    <title>Rapport PRTG - $mois</title>
+    <meta charset="utf-8">
+    <title>PRTG Report - $mois</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #ffffff; color: #222; margin: 40px; }
-        h1 { font-size: 24px; color: #333; }
-        .subtitle { font-size: 14px; margin-bottom: 20px; color: #555; }
-        table { border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ccc; padding: 10px 15px; text-align: left; white-space: nowrap; }
-        th { background-color: #2c3e50; color: #fff; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tfoot td { font-weight: bold; border-top: 2px solid #2c3e50; }
-        footer { margin-top: 40px; font-size: 12px; color: #888; }
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: transparent;
+            color: #222;
+            margin: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .total-errors {
+            background-color: #ffe6e6;
+            border: 1px solid #ffcccc;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #a00000;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: normal;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h1>Rapport mensuel PRTG - $mois</h1>
-    <p class=\"subtitle\">Resume des erreurs detectees ce mois-ci par PRTG.</p>
+    <h1>Monthly PRTG Report - $mois</h1>
+    <p class="subtitle">Summary of errors detected by PRTG this month.</p>
+    <div class="total-errors">Total errors this month: $totalErreurs</div>
+
     <table>
-        <thead><tr><th>Erreur</th><th>Nombre</th></tr></thead>
+        <thead>
+            <tr><th>Error</th><th>Count</th></tr>
+        </thead>
         <tbody>
 "@
 
@@ -57,25 +114,17 @@ foreach ($ligne in $donneesGroupees) {
 
 $html += @"
         </tbody>
-        <tfoot>
-            <tr><td>Total des erreurs</td><td>$totalErreurs</td></tr>
-        </tfoot>
     </table>
-    <footer>Genere le $(Get-Date -Format "yyyy-MM-dd HH:mm")</footer>
+
+    <footer><p>Generated on $(Get-Date -Format "yyyy-MM-dd HH:mm")</p></footer>
 </body>
 </html>
 "@
 
+
 # === SAUVEGARDE DU HTML ===
 $utf8BOM = New-Object System.Text.UTF8Encoding $true
 [System.IO.File]::WriteAllText($cheminHtmlRapport, $html, $utf8BOM)
-
-# === ARCHIVAGE ===
-if (!(Test-Path $dossierArchives)) {
-    New-Item -Path $dossierArchives -ItemType Directory | Out-Null
-}
-$cheminArchive = Join-Path $dossierArchives "rapport_prtg_$mois.html"
-Copy-Item -Path $cheminHtmlRapport -Destination $cheminArchive -Force
 
 $destinataires = @(
     "MAIL 1",
