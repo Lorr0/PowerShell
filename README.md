@@ -2,7 +2,7 @@
 
 👀 Retrouvez ici l'ensemble de mes scripts PowerShell développés au cours de mes études et de mes expériences professionnelles, chacun accompagné d’une description claire et à jour.
 
-> 💡 Tous les scripts ont été conçus par mes soins, en combinant mes connaissances techniques et l’assistance ponctuelle de ChatGPT.
+> 💡 Tous les scripts ont été conçus par mes soins, en combinant mes connaissances techniques et l’assistance ponctuelle de l'IA.
 
 ---
 
